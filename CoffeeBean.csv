@@ -1,0 +1,201 @@
+beanID,beanName,variety,origin
+B001,Heirloom – Ethiopia,Heirloom,Ethiopia
+B002,Other – Ethiopia,Other,Ethiopia
+B003,Bourbon – Guatemala,Bourbon,Guatemala
+B004,Heirloom – Brazil,Heirloom,Brazil
+B005,Other – Peru,Other,Peru
+B006,Other – United States,Other,United States
+B007,Heirloom – United States (Hawaii),Heirloom,United States (Hawaii)
+B008,Heirloom – Indonesia,Heirloom,Indonesia
+B009,Catimor – China,Catimor,China
+B010,Ethiopian Yirgacheffe – Ethiopia,Ethiopian Yirgacheffe,Ethiopia
+B011,Caturra – Costa Rica,Caturra,Costa Rica
+B012,Other – Mexico,Other,Mexico
+B013,Bourbon – Brazil,Bourbon,Brazil
+B014,SL14 – Uganda,SL14,Uganda
+B015,Caturra – Honduras,Caturra,Honduras
+B016,Sumatra – Taiwan,Sumatra,Taiwan
+B017,Heirloom – Nicaragua,Heirloom,Nicaragua
+B018,"Heirloom – Tanzania, United Republic Of",Heirloom,"Tanzania, United Republic Of"
+B019,SL34 – Kenya,SL34,Kenya
+B020,Hawaiian Kona – United States (Hawaii),Hawaiian Kona,United States (Hawaii)
+B021,Caturra – Thailand,Caturra,Thailand
+B022,Yellow Bourbon – Brazil,Yellow Bourbon,Brazil
+B023,Bourbon – Taiwan,Bourbon,Taiwan
+B024,SL28 – Kenya,SL28,Kenya
+B025,Heirloom – Uganda,Heirloom,Uganda
+B026,Caturra – Colombia,Caturra,Colombia
+B027,Other – Uganda,Other,Uganda
+B028,Gesha – Panama,Gesha,Panama
+B029,Catuai – Guatemala,Catuai,Guatemala
+B030,Caturra – Ethiopia,Caturra,Ethiopia
+B031,Heirloom – Peru,Heirloom,Peru
+B032,Heirloom – Papua New Guinea,Heirloom,Papua New Guinea
+B033,Bourbon – El Salvador,Bourbon,El Salvador
+B034,Caturra – Panama,Caturra,Panama
+B035,Heirloom – El Salvador,Heirloom,El Salvador
+B036,Pacamara – Guatemala,Pacamara,Guatemala
+B037,Typica – Ethiopia,Typica,Ethiopia
+B038,Sumatra Lintong – Indonesia,Sumatra Lintong,Indonesia
+B039,Caturra – Guatemala,Caturra,Guatemala
+B040,Catuai – Costa Rica,Catuai,Costa Rica
+B041,Typica – Mexico,Typica,Mexico
+B042,Heirloom – Kenya,Heirloom,Kenya
+B043,Mundo Novo – Brazil,Mundo Novo,Brazil
+B044,Pacamara – Mexico,Pacamara,Mexico
+B045,Heirloom – Guatemala,Heirloom,Guatemala
+B046,Typica – Taiwan,Typica,Taiwan
+B047,"Other – Tanzania, United Republic Of",Other,"Tanzania, United Republic Of"
+B048,Catuai – Brazil,Catuai,Brazil
+B049,Catuai – Honduras,Catuai,Honduras
+B050,Java – Indonesia,Java,Indonesia
+B051,Mundo Novo – Japan,Mundo Novo,Japan
+B052,Other – Costa Rica,Other,Costa Rica
+B053,Heirloom – Costa Rica,Heirloom,Costa Rica
+B054,Other – Colombia,Other,Colombia
+B055,Peaberry – Kenya,Peaberry,Kenya
+B056,Pacas – Guatemala,Pacas,Guatemala
+B057,Bourbon – Costa Rica,Bourbon,Costa Rica
+B058,Other – China,Other,China
+B059,Mandheling – Indonesia,Mandheling,Indonesia
+B060,Heirloom – Colombia,Heirloom,Colombia
+B061,Catimor – Thailand,Catimor,Thailand
+B062,Bourbon – Mexico,Bourbon,Mexico
+B063,Caturra – Nicaragua,Caturra,Nicaragua
+B064,Gesha – Ethiopia,Gesha,Ethiopia
+B065,Other – Thailand,Other,Thailand
+B066,Heirloom – Thailand,Heirloom,Thailand
+B067,Mundo Novo – Mexico,Mundo Novo,Mexico
+B068,Heirloom – Taiwan,Heirloom,Taiwan
+B069,Heirloom – Ecuador,Heirloom,Ecuador
+B070,Pacas – Mexico,Pacas,Mexico
+B071,Bourbon – Uganda,Bourbon,Uganda
+B072,Other – United States (Puerto Rico),Other,United States (Puerto Rico)
+B073,Caturra – Mexico,Caturra,Mexico
+B074,Caturra – Taiwan,Caturra,Taiwan
+B075,Typica – Indonesia,Typica,Indonesia
+B076,"Ruiru 11 – Tanzania, United Republic Of",Ruiru 11,"Tanzania, United Republic Of"
+B077,Sumatra – Indonesia,Sumatra,Indonesia
+B078,"Bourbon – Tanzania, United Republic Of",Bourbon,"Tanzania, United Republic Of"
+B079,Peaberry – Thailand,Peaberry,Thailand
+B080,Heirloom – Mexico,Heirloom,Mexico
+B081,Typica – Haiti,Typica,Haiti
+B082,Bourbon – Burundi,Bourbon,Burundi
+B083,Catimor – Vietnam,Catimor,Vietnam
+B084,Caturra – Vietnam,Caturra,Vietnam
+B085,Arusha – Colombia,Arusha,Colombia
+B086,Ethiopian Heirlooms – Ethiopia,Ethiopian Heirlooms,Ethiopia
+B087,Other – Philippines,Other,Philippines
+B088,Moka Peaberry – Brazil,Moka Peaberry,Brazil
+B089,Other – Vietnam,Other,Vietnam
+B090,Pacas – El Salvador,Pacas,El Salvador
+B091,Bourbon – Rwanda,Bourbon,Rwanda
+B092,Typica – Colombia,Typica,Colombia
+B093,"Arusha – Tanzania, United Republic Of",Arusha,"Tanzania, United Republic Of"
+B094,Sulawesi – Indonesia,Sulawesi,Indonesia
+B095,Yellow Bourbon – Taiwan,Yellow Bourbon,Taiwan
+B096,Gesha – Malawi,Gesha,Malawi
+B097,Catuai – Panama,Catuai,Panama
+B098,Catimor – Laos,Catimor,Laos
+B099,Other – El Salvador,Other,El Salvador
+B100,Blue Mountain – Mexico,Blue Mountain,Mexico
+B101,Other – Indonesia,Other,Indonesia
+B102,Other – Honduras,Other,Honduras
+B103,Heirloom – Honduras,Heirloom,Honduras
+B104,Arusha – Brazil,Arusha,Brazil
+B105,Bourbon – Indonesia,Bourbon,Indonesia
+B106,Other – Laos,Other,Laos
+B107,SL28 – Zambia,SL28,Zambia
+B108,Catuai – Myanmar,Catuai,Myanmar
+B109,Catuai – Mexico,Catuai,Mexico
+B110,Catimor – Honduras,Catimor,Honduras
+B111,Marigojipe – Mexico,Marigojipe,Mexico
+B112,Other – Guatemala,Other,Guatemala
+B113,Blue Mountain – Haiti,Blue Mountain,Haiti
+B114,Peaberry – United States (Hawaii),Peaberry,United States (Hawaii)
+B115,Catuai – Nicaragua,Catuai,Nicaragua
+B116,Typica – Philippines,Typica,Philippines
+B117,Caturra – Malawi,Caturra,Malawi
+B118,Other – Nicaragua,Other,Nicaragua
+B119,Pache Comun – United States,Pache Comun,United States
+B120,Other – Taiwan,Other,Taiwan
+B121,Other – Myanmar,Other,Myanmar
+B122,Arusha – United States (Hawaii),Arusha,United States (Hawaii)
+B123,Heirloom – Mauritius,Heirloom,Mauritius
+B124,Heirloom – Burundi,Heirloom,Burundi
+B125,Heirloom – Cote d?Ivoire,Heirloom,Cote d?Ivoire
+B126,Heirloom – Unknown,Heirloom,Unknown
+B127,Pacas – Honduras,Pacas,Honduras
+B128,Typica – Peru,Typica,Peru
+B129,Typica – China,Typica,China
+B130,Caturra – Peru,Caturra,Peru
+B131,Heirloom – India,Heirloom,India
+B132,Heirloom – Philippines,Heirloom,Philippines
+B133,Heirloom – Haiti,Heirloom,Haiti
+B134,Other – India,Other,India
+B135,Arusha – United States,Arusha,United States
+B136,Heirloom – United States,Heirloom,United States
+B137,Heirloom – Vietnam,Heirloom,Vietnam
+B138,Catimor – China,Catimor,China
+B139,Catuai – Costa Rica,Catuai,Costa Rica
+B140,Catuai – Brazil,Catuai,Brazil
+B141,Hawaiian Kona – United States (Hawaii),Hawaiian Kona,United States (Hawaii)
+B142,Pacas – Mexico,Pacas,Mexico
+B143,Heirloom – Uganda,Heirloom,Uganda
+B144,Mandheling – Indonesia,Mandheling,Indonesia
+B145,Heirloom – Mauritius,Heirloom,Mauritius
+B146,Heirloom – Cote d?Ivoire,Heirloom,Cote d?Ivoire
+B147,Heirloom – El Salvador,Heirloom,El Salvador
+B148,Heirloom – Brazil,Heirloom,Brazil
+B149,Heirloom – Costa Rica,Heirloom,Costa Rica
+B150,Pacamara – Guatemala,Pacamara,Guatemala
+B151,Heirloom – Kenya,Heirloom,Kenya
+B152,Pacamara – Mexico,Pacamara,Mexico
+B153,Bourbon – Taiwan,Bourbon,Taiwan
+B154,Typica – Ethiopia,Typica,Ethiopia
+B155,Other – Honduras,Other,Honduras
+B156,Heirloom – India,Heirloom,India
+B157,Typica – Philippines,Typica,Philippines
+B158,Hawaiian Kona – United States (Hawaii),Hawaiian Kona,United States (Hawaii)
+B159,Heirloom – Peru,Heirloom,Peru
+B160,Other – United States,Other,United States
+B161,Other – Taiwan,Other,Taiwan
+B162,Catuai – Brazil,Catuai,Brazil
+B163,Heirloom – Peru,Heirloom,Peru
+B164,Catuai – Panama,Catuai,Panama
+B165,Other – Honduras,Other,Honduras
+B166,Catuai – Panama,Catuai,Panama
+B167,Heirloom – Mauritius,Heirloom,Mauritius
+B168,Heirloom – Thailand,Heirloom,Thailand
+B169,Heirloom – Colombia,Heirloom,Colombia
+B170,Other – Indonesia,Other,Indonesia
+B171,Caturra – Peru,Caturra,Peru
+B172,Mundo Novo – Japan,Mundo Novo,Japan
+B173,Other – Guatemala,Other,Guatemala
+B174,Other – Mexico,Other,Mexico
+B175,Heirloom – Ecuador,Heirloom,Ecuador
+B176,Bourbon – Brazil,Bourbon,Brazil
+B177,Bourbon – Burundi,Bourbon,Burundi
+B178,Heirloom – Honduras,Heirloom,Honduras
+B179,Caturra – Costa Rica,Caturra,Costa Rica
+B180,Arusha – Colombia,Arusha,Colombia
+B181,Other – Guatemala,Other,Guatemala
+B182,Catimor – China,Catimor,China
+B183,Other – Laos,Other,Laos
+B184,Bourbon – El Salvador,Bourbon,El Salvador
+B185,Caturra – Costa Rica,Caturra,Costa Rica
+B186,Heirloom – Burundi,Heirloom,Burundi
+B187,"Heirloom – Tanzania, United Republic Of",Heirloom,"Tanzania, United Republic Of"
+B188,SL14 – Uganda,SL14,Uganda
+B189,"Arusha – Tanzania, United Republic Of",Arusha,"Tanzania, United Republic Of"
+B190,Other – Ethiopia,Other,Ethiopia
+B191,"Ruiru 11 – Tanzania, United Republic Of",Ruiru 11,"Tanzania, United Republic Of"
+B192,Bourbon – Indonesia,Bourbon,Indonesia
+B193,Other – Myanmar,Other,Myanmar
+B194,Heirloom – El Salvador,Heirloom,El Salvador
+B195,Sulawesi – Indonesia,Sulawesi,Indonesia
+B196,Mundo Novo – Brazil,Mundo Novo,Brazil
+B197,Bourbon – Taiwan,Bourbon,Taiwan
+B198,Hawaiian Kona – United States (Hawaii),Hawaiian Kona,United States (Hawaii)
+B199,Heirloom – Haiti,Heirloom,Haiti
+B200,Sulawesi – Indonesia,Sulawesi,Indonesia
