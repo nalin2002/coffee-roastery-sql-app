@@ -1,3 +1,10 @@
+"""
+MPCS 53001 Databases - Final Project Step 3
+Coffee Roastery Database GUI
+
+Team: Nalin Prabhath, Yuanda Gao, Qinyu Li, Disha Janardhan
+"""
+
 import os
 import sys
 from pathlib import Path
@@ -14,7 +21,9 @@ from PyQt5.QtWidgets import (
 
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"))
 
+
 def get_conn():
+    # opens a new connection to our coffee_roastery MySQL database
     return mysql.connector.connect(
         host=os.environ["DB_HOST"],
         port=int(os.environ.get("DB_PORT", 3306)),
@@ -24,7 +33,7 @@ def get_conn():
         autocommit=False,
         charset="utf8mb4",
         collation="utf8mb4_unicode_ci",
-        use_pure=True,  # mysql-connector 9.x C ext segfaults on Windows; pure-Python is stable
+        use_pure=True,
     )
 
 
@@ -39,9 +48,9 @@ QUERIES = [
                 s.supplierID, s.supplierName,
                 bl.lotID, blu.quantityUsedKg
             FROM BatchLotUsage blu
-            JOIN BeanLot  bl ON bl.lotID      = blu.lotID
-            JOIN Farm     f  ON f.farmID      = bl.farmID
-            JOIN Supplier s  ON s.supplierID  = bl.supplierID
+            JOIN BeanLot bl ON bl.lotID = blu.lotID
+            JOIN Farm f ON f.farmID = bl.farmID
+            JOIN Supplier s ON s.supplierID = bl.supplierID
             WHERE blu.batchID = %s
             ORDER BY f.farmName, s.supplierName, bl.lotID
         """,
@@ -56,13 +65,13 @@ QUERIES = [
                 rb.batchID, rb.roastDate, fb.quantityFromBatchKg,
                 bl.lotID, blu.quantityUsedKg,
                 f.farmName, f.country
-            FROM OrderLine     ol
-            JOIN Product       p   ON p.productID  = ol.productID
-            JOIN FulfilledBy   fb  ON fb.lineID    = ol.lineID
-            JOIN RoastingBatch rb  ON rb.batchID   = fb.batchID
-            JOIN BatchLotUsage blu ON blu.batchID  = rb.batchID
-            JOIN BeanLot       bl  ON bl.lotID     = blu.lotID
-            JOIN Farm          f   ON f.farmID     = bl.farmID
+            FROM OrderLine ol
+            JOIN Product p ON p.productID = ol.productID
+            JOIN FulfilledBy fb ON fb.lineID = ol.lineID
+            JOIN RoastingBatch rb ON rb.batchID = fb.batchID
+            JOIN BatchLotUsage blu ON blu.batchID = rb.batchID
+            JOIN BeanLot bl ON bl.lotID = blu.lotID
+            JOIN Farm f ON f.farmID = bl.farmID
             WHERE ol.orderID = %s
             ORDER BY ol.lineID, rb.batchID, bl.lotID
         """,
@@ -74,10 +83,10 @@ QUERIES = [
         "sql": """
             SELECT
                 rp.profileID, rp.profileName, rp.roastLevel,
-                COUNT(*)                      AS batches_count,
-                SUM(rb.quantityProducedKg)    AS total_produced_kg
+                COUNT(*) AS batches_count,
+                SUM(rb.quantityProducedKg) AS total_produced_kg
             FROM RoastingBatch rb
-            JOIN RoastProfile  rp ON rp.profileID = rb.profileID
+            JOIN RoastProfile rp ON rp.profileID = rb.profileID
             GROUP BY rp.profileID, rp.profileName, rp.roastLevel
             ORDER BY batches_count DESC
             LIMIT %s
@@ -92,11 +101,11 @@ QUERIES = [
                 bl.lotID, b.beanName, b.variety,
                 f.farmName, f.country,
                 bl.arrivalDate,
-                bl.quantityKg   AS arrived_kg,
-                bl.remainingKg  AS remaining_kg
-            FROM BeanLot    bl
+                bl.quantityKg AS arrived_kg,
+                bl.remainingKg AS remaining_kg
+            FROM BeanLot bl
             JOIN CoffeeBean b ON b.beanID = bl.beanID
-            JOIN Farm       f ON f.farmID = bl.farmID
+            JOIN Farm f ON f.farmID = bl.farmID
             ORDER BY bl.remainingKg DESC
         """,
     },
@@ -109,9 +118,9 @@ QUERIES = [
                 p.productID, p.productName, p.productType,
                 b.beanID, b.beanName, b.variety, b.origin,
                 bc.proportion
-            FROM Product        p
+            FROM Product p
             JOIN BlendComponent bc ON bc.productID = p.productID
-            JOIN CoffeeBean     b  ON b.beanID     = bc.beanID
+            JOIN CoffeeBean b ON b.beanID = bc.beanID
             WHERE p.productID IN (
                 SELECT productID FROM BlendComponent
                 GROUP BY productID HAVING COUNT(*) > 1
@@ -127,12 +136,12 @@ QUERIES = [
             SELECT
                 so.orderID, so.orderDate, p.productName,
                 rb.batchID, rb.roastDate, fb.quantityFromBatchKg
-            FROM Client        c
-            JOIN SalesOrder    so ON so.clientID  = c.clientID
-            JOIN OrderLine     ol ON ol.orderID   = so.orderID
-            JOIN Product       p  ON p.productID  = ol.productID
-            JOIN FulfilledBy   fb ON fb.lineID    = ol.lineID
-            JOIN RoastingBatch rb ON rb.batchID   = fb.batchID
+            FROM Client c
+            JOIN SalesOrder so ON so.clientID = c.clientID
+            JOIN OrderLine ol ON ol.orderID = so.orderID
+            JOIN Product p ON p.productID = ol.productID
+            JOIN FulfilledBy fb ON fb.lineID = ol.lineID
+            JOIN RoastingBatch rb ON rb.batchID = fb.batchID
             WHERE c.clientID = %s
             ORDER BY so.orderDate DESC, so.orderID, rb.batchID
         """,
@@ -144,13 +153,13 @@ QUERIES = [
         "sql": """
             SELECT
                 rp.profileID, rp.profileName, rp.roastLevel,
-                COUNT(qc.qcID)                      AS n_batches,
-                ROUND(AVG(qc.cuppingScore), 2)      AS avg_score,
-                ROUND(MIN(qc.cuppingScore), 2)      AS min_score,
-                ROUND(MAX(qc.cuppingScore), 2)      AS max_score
-            FROM RoastProfile          rp
-            JOIN RoastingBatch         rb ON rb.profileID = rp.profileID
-            JOIN QualityControlRecord  qc ON qc.batchID   = rb.batchID
+                COUNT(qc.qcID) AS n_batches,
+                ROUND(AVG(qc.cuppingScore), 2) AS avg_score,
+                ROUND(MIN(qc.cuppingScore), 2) AS min_score,
+                ROUND(MAX(qc.cuppingScore), 2) AS max_score
+            FROM RoastProfile rp
+            JOIN RoastingBatch rb ON rb.profileID = rp.profileID
+            JOIN QualityControlRecord qc ON qc.batchID = rb.batchID
             GROUP BY rp.profileID, rp.profileName, rp.roastLevel
             ORDER BY avg_score DESC
         """,
@@ -160,18 +169,18 @@ QUERIES = [
         "title": "Which clients purchased the highest volume of each product over a selected time period?",
         "params": [
             {"name": "start_date", "kind": "date", "label": "Start date"},
-            {"name": "end_date",   "kind": "date", "label": "End date"},
+            {"name": "end_date", "kind": "date", "label": "End date"},
         ],
         "sql": """
             SELECT
                 p.productID, p.productName,
-                c.clientID,  c.clientName,
-                SUM(ol.quantity)   AS total_kg,
-                SUM(ol.linePrice)  AS total_revenue
+                c.clientID, c.clientName,
+                SUM(ol.quantity) AS total_kg,
+                SUM(ol.linePrice) AS total_revenue
             FROM SalesOrder so
-            JOIN Client     c  ON c.clientID   = so.clientID
-            JOIN OrderLine  ol ON ol.orderID   = so.orderID
-            JOIN Product    p  ON p.productID  = ol.productID
+            JOIN Client c ON c.clientID = so.clientID
+            JOIN OrderLine ol ON ol.orderID = so.orderID
+            JOIN Product p ON p.productID = ol.productID
             WHERE so.orderDate BETWEEN %s AND %s
             GROUP BY p.productID, p.productName, c.clientID, c.clientName
             ORDER BY p.productID, total_kg DESC
@@ -184,12 +193,12 @@ QUERIES = [
         "sql": """
             SELECT
                 so.orderID, so.orderDate, c.clientName,
-                SUM(ol.quantity)  AS total_ordered_kg,
-                (SELECT COALESCE(SUM(rb.remainingKg), 0)
-                 FROM RoastingBatch rb)  AS total_available_roasted_kg
+                SUM(ol.quantity) AS total_ordered_kg,
+                (SELECT COALESCE(SUM(rb.remainingKg), 0) FROM RoastingBatch rb)
+                    AS total_available_roasted_kg
             FROM SalesOrder so
-            JOIN Client     c  ON c.clientID = so.clientID
-            JOIN OrderLine  ol ON ol.orderID = so.orderID
+            JOIN Client c ON c.clientID = so.clientID
+            JOIN OrderLine ol ON ol.orderID = so.orderID
             WHERE so.status = 'Pending'
             GROUP BY so.orderID, so.orderDate, c.clientName
             ORDER BY so.orderDate
@@ -204,8 +213,8 @@ QUERIES = [
                 so.orderID, so.orderDate, so.status, c.clientName,
                 sh.shipmentID, sh.shipmentDate, sh.carrier, sh.trackingNumber
             FROM SalesOrder so
-            JOIN Shipment   sh ON sh.orderID  = so.orderID
-            JOIN Client     c  ON c.clientID  = so.clientID
+            JOIN Shipment sh ON sh.orderID = so.orderID
+            JOIN Client c ON c.clientID = so.clientID
             ORDER BY sh.shipmentDate DESC
         """,
     },
@@ -216,14 +225,14 @@ QUERIES = [
         "sql": """
             SELECT
                 bl.lotID, b.beanName, f.farmName,
-                COUNT(DISTINCT blu.batchID)  AS batches_used_in,
-                SUM(blu.quantityUsedKg)      AS total_used_kg,
-                bl.quantityKg                AS original_kg,
-                bl.remainingKg               AS remaining_kg
+                COUNT(DISTINCT blu.batchID) AS batches_used_in,
+                SUM(blu.quantityUsedKg) AS total_used_kg,
+                bl.quantityKg AS original_kg,
+                bl.remainingKg AS remaining_kg
             FROM BatchLotUsage blu
-            JOIN BeanLot       bl ON bl.lotID = blu.lotID
-            JOIN CoffeeBean    b  ON b.beanID = bl.beanID
-            JOIN Farm          f  ON f.farmID = bl.farmID
+            JOIN BeanLot bl ON bl.lotID = blu.lotID
+            JOIN CoffeeBean b ON b.beanID = bl.beanID
+            JOIN Farm f ON f.farmID = bl.farmID
             GROUP BY bl.lotID, b.beanName, f.farmName, bl.quantityKg, bl.remainingKg
             ORDER BY batches_used_in DESC, total_used_kg DESC
             LIMIT %s
@@ -234,11 +243,8 @@ QUERIES = [
         "title": "Which products are the best-selling products by month, and which clients buy them most often?",
         "params": [
             {"name": "start_date", "kind": "date", "label": "Start date"},
-            {"name": "end_date",   "kind": "date", "label": "End date"},
+            {"name": "end_date", "kind": "date", "label": "End date"},
         ],
-        # %% escapes the literal % that DATE_FORMAT needs (mysql-connector parses %s as a placeholder).
-        # Aggregate first, then look up the top client per (month, product) — avoids
-        # only_full_group_by complaints on the correlated subquery.
         "sql": """
             SELECT
                 monthly.month,
@@ -248,8 +254,8 @@ QUERIES = [
                 (
                     SELECT c2.clientName
                     FROM SalesOrder so2
-                    JOIN Client     c2  ON c2.clientID = so2.clientID
-                    JOIN OrderLine  ol2 ON ol2.orderID = so2.orderID
+                    JOIN Client c2 ON c2.clientID = so2.clientID
+                    JOIN OrderLine ol2 ON ol2.orderID = so2.orderID
                     WHERE ol2.productID = monthly.productID
                       AND DATE_FORMAT(so2.orderDate, '%%Y-%%m') = monthly.month
                     GROUP BY c2.clientID, c2.clientName
@@ -260,10 +266,10 @@ QUERIES = [
                 SELECT
                     DATE_FORMAT(so.orderDate, '%%Y-%%m') AS month,
                     p.productID, p.productName,
-                    SUM(ol.quantity)                      AS total_kg
+                    SUM(ol.quantity) AS total_kg
                 FROM SalesOrder so
-                JOIN OrderLine ol ON ol.orderID  = so.orderID
-                JOIN Product   p  ON p.productID = ol.productID
+                JOIN OrderLine ol ON ol.orderID = so.orderID
+                JOIN Product p ON p.productID = ol.productID
                 WHERE so.orderDate BETWEEN %s AND %s
                 GROUP BY month, p.productID, p.productName
             ) AS monthly
@@ -299,14 +305,18 @@ class MainWindow(QMainWindow):
 
         layout.addWidget(QLabel("<h1>Coffee Roastery Database</h1>"))
         welcome = QLabel(
-            "Welcome! This database tracks specialty coffee from farms through suppliers, "
-            "roasting batches, quality control, products, and wholesale orders. "
-            "Pick a question below, fill in any parameters, and click <b>Run query</b> "
-            "to see results. You can also place a new sales order."
+            "This is our final project for Databases. The database "
+            "keeps track of a specialty coffee roastery: from the farms where "
+            "the beans are grown, all the way to the wholesale orders we ship "
+            "out. Pick one of the 12 questions below, fill in the inputs if any, "
+            "and click Run query to see the results. You can also add a new "
+            "sales order using the button on the right."
         )
         welcome.setWordWrap(True)
         layout.addWidget(welcome)
         layout.addSpacing(8)
+
+        # the dropdown that shows all 12 of our queries
         layout.addWidget(QLabel("<b>Question:</b>"))
         self.query_box = QComboBox()
         for q in QUERIES:
@@ -335,6 +345,8 @@ class MainWindow(QMainWindow):
         self.rebuild_params()
 
     def rebuild_params(self):
+        # whenever the user picks a different question, we rebuild the
+        # input row to match what that question needs (dropdown, date, etc.)
         while self.param_layout.rowCount() > 0:
             self.param_layout.removeRow(0)
         self.param_widgets = {}
@@ -356,7 +368,6 @@ class MainWindow(QMainWindow):
                 widget = QDateEdit()
                 widget.setCalendarPopup(True)
                 widget.setDisplayFormat("yyyy-MM-dd")
-                # Default range: covers the seeded SalesOrder dates (2025)
                 if "start" in p["name"]:
                     widget.setDate(QDate(2025, 1, 1))
                 else:
@@ -384,6 +395,8 @@ class MainWindow(QMainWindow):
         return values
 
     def run_query(self):
+        # gets called when the user clicks Run query.
+        # we always open a fresh connection so the results are not cached.
         q = self.query_box.currentData()
         params = self.collect_params()
         try:
@@ -396,6 +409,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Query error", str(e))
             return
 
+        # put the rows into the results table
         self.results.clear()
         self.results.setColumnCount(len(columns))
         self.results.setRowCount(len(rows))
@@ -504,7 +518,7 @@ class NewOrderDialog(QDialog):
         prod_box = self.lines.cellWidget(row, 0)
         qty = self.lines.cellWidget(row, 1)
         prod_data = prod_box.currentData()
-        if prod_data is None:  # no products loaded
+        if prod_data is None:
             return
         pid, default_price = prod_data
         price = self.client_prices.get((self.client_box.currentData(), pid), default_price)
@@ -516,11 +530,14 @@ class NewOrderDialog(QDialog):
             self.recompute_line(r)
 
     def save(self):
+        # collects the info the user entered and inserts a new SalesOrder
+        # plus its OrderLines into the database in one transaction.
         client_id = self.client_box.currentData()
         if not client_id:
             QMessageBox.warning(self, "Missing client", "Please pick a client.")
             return
 
+        # gather each row's product, quantity, and price into a list
         line_data = []
         for r in range(self.lines.rowCount()):
             prod_data = self.lines.cellWidget(r, 0).currentData()
@@ -541,12 +558,14 @@ class NewOrderDialog(QDialog):
         try:
             with get_conn() as conn:
                 cur = conn.cursor()
+                # figure out the next orderID by looking at the biggest one so far
                 cur.execute("SELECT COALESCE(MAX(CAST(SUBSTRING(orderID, 2) AS UNSIGNED)), 0) FROM SalesOrder")
                 order_id = f"O{int(cur.fetchone()[0]) + 1:04d}"
                 cur.execute(
                     "INSERT INTO SalesOrder (orderID, clientID, orderDate, status) VALUES (%s, %s, %s, %s)",
                     (order_id, client_id, order_date, status),
                 )
+                # same idea for the next lineID
                 cur.execute("SELECT COALESCE(MAX(CAST(SUBSTRING(lineID, 2) AS UNSIGNED)), 0) FROM OrderLine")
                 next_line_num = int(cur.fetchone()[0]) + 1
                 for i, (pid, qty, line_price) in enumerate(line_data):
