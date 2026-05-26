@@ -1,18 +1,23 @@
--- Coffee Roastery — MySQL DDL
+-- Coffee Roastery — MySQL DDL (schema v2, ready to use)
 -- Charset utf8mb4 everywhere: source CSVs contain em-dashes, curly quotes, arrows.
 --
--- Divergences from Schema.txt (DDL follows actual CSV columns so LOAD DATA works):
---   * SalesOrder.totalAmount   — in schema, not in CSV → omitted
---   * BlendComponent.componentID — in schema, not in CSV → PK is (productID, beanID)
---   * BeanLot adds supplierID, beanID  (FKs added during generation)
---   * RoastingBatch adds lotID, profileID
---   * QualityControlRecord adds batchID
---   * ClientPrice, FulfilledBy are association tables (not in schema literal)
---
--- Load order: parents first. See bottom of file.
+-- Divergences from Schema.txt:
+--   * SalesOrder.totalAmount        — in schema, not in CSV (compute via SUM(OrderLine.linePrice))
+--   * BlendComponent.componentID    — in schema, not in CSV; PK is (productID, beanID)
+--   * BeanLot adds supplierID, farmID, beanID, remainingKg
+--   * RoastingBatch uses BatchLotUsage (many lots per batch); adds remainingKg
+--   * QualityControlRecord adds batchID (one QC per batch)
+--   * BatchLotUsage, ClientPrice, FulfilledBy are association tables
+--   * Triggers maintain BeanLot.remainingKg and RoastingBatch.remainingKg
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+SET SQL_SAFE_UPDATES = 0;
+
+DROP TRIGGER IF EXISTS trg_blu_ai;
+DROP TRIGGER IF EXISTS trg_blu_ad;
+DROP TRIGGER IF EXISTS trg_fb_ai;
+DROP TRIGGER IF EXISTS trg_fb_ad;
 
 DROP TABLE IF EXISTS FulfilledBy;
 DROP TABLE IF EXISTS Shipment;
@@ -23,6 +28,7 @@ DROP TABLE IF EXISTS UserAccount;
 DROP TABLE IF EXISTS Client;
 DROP TABLE IF EXISTS BlendComponent;
 DROP TABLE IF EXISTS QualityControlRecord;
+DROP TABLE IF EXISTS BatchLotUsage;
 DROP TABLE IF EXISTS RoastingBatch;
 DROP TABLE IF EXISTS RoastProfile;
 DROP TABLE IF EXISTS BeanLot;
@@ -90,20 +96,24 @@ CREATE TABLE Client (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ---------------------------------------------------------------------------
--- Level 2: depend on level 1
+-- Level 2
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE BeanLot (
   lotID        VARCHAR(10)    NOT NULL,
   supplierID   VARCHAR(8)     NOT NULL,
+  farmID       VARCHAR(8)     NOT NULL,
   beanID       VARCHAR(8)     NOT NULL,
   arrivalDate  DATE           NOT NULL,
   quantityKg   DECIMAL(12,2)  NOT NULL,
   costPerKg    DECIMAL(10,2)  NOT NULL,
+  remainingKg  DECIMAL(12,2)  NOT NULL,
   PRIMARY KEY (lotID),
   KEY ix_beanlot_supplier (supplierID),
+  KEY ix_beanlot_farm (farmID),
   KEY ix_beanlot_bean (beanID),
   CONSTRAINT fk_beanlot_supplier FOREIGN KEY (supplierID) REFERENCES Supplier(supplierID),
+  CONSTRAINT fk_beanlot_farm     FOREIGN KEY (farmID)     REFERENCES Farm(farmID),
   CONSTRAINT fk_beanlot_bean     FOREIGN KEY (beanID)     REFERENCES CoffeeBean(beanID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -151,21 +161,29 @@ CREATE TABLE SalesOrder (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ---------------------------------------------------------------------------
--- Level 3: depend on level 2
+-- Level 3
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE RoastingBatch (
   batchID             VARCHAR(8)    NOT NULL,
-  lotID               VARCHAR(10)   NOT NULL,
   profileID           VARCHAR(8)    NOT NULL,
   roastDate           DATE          NOT NULL,
   quantityProducedKg  DECIMAL(10,2) NOT NULL,
+  remainingKg         DECIMAL(10,2) NOT NULL,
   notes               TEXT          NULL,
   PRIMARY KEY (batchID),
-  KEY ix_rb_lot (lotID),
   KEY ix_rb_profile (profileID),
-  CONSTRAINT fk_rb_lot     FOREIGN KEY (lotID)     REFERENCES BeanLot(lotID),
   CONSTRAINT fk_rb_profile FOREIGN KEY (profileID) REFERENCES RoastProfile(profileID)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE BatchLotUsage (
+  batchID         VARCHAR(8)    NOT NULL,
+  lotID           VARCHAR(10)   NOT NULL,
+  quantityUsedKg  DECIMAL(10,2) NOT NULL,
+  PRIMARY KEY (batchID, lotID),
+  KEY ix_blu_lot (lotID),
+  CONSTRAINT fk_blu_batch FOREIGN KEY (batchID) REFERENCES RoastingBatch(batchID),
+  CONSTRAINT fk_blu_lot   FOREIGN KEY (lotID)   REFERENCES BeanLot(lotID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE OrderLine (
@@ -220,74 +238,33 @@ CREATE TABLE FulfilledBy (
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ---------------------------------------------------------------------------
+-- Triggers — keep remainingKg in sync as BatchLotUsage and FulfilledBy change
+-- ---------------------------------------------------------------------------
 
-  -- USE coffee_roastery;
-  -- SET FOREIGN_KEY_CHECKS = 0;
+DELIMITER //
 
-  -- TRUNCATE TABLE UserAccount;
-  -- TRUNCATE TABLE Shipment;
-  -- TRUNCATE TABLE OrderLine;
-  -- TRUNCATE TABLE SalesOrder;
-  -- TRUNCATE TABLE ClientPrice;
-  -- TRUNCATE TABLE Client;
+CREATE TRIGGER trg_blu_ai AFTER INSERT ON BatchLotUsage
+FOR EACH ROW
+BEGIN
+  UPDATE BeanLot SET remainingKg = remainingKg - NEW.quantityUsedKg WHERE lotID = NEW.lotID;
+END//
 
-  -- TRUNCATE TABLE QualityControlRecord;
-  -- TRUNCATE TABLE FulfilledBy;
-  -- TRUNCATE TABLE RoastingBatch;
-  -- TRUNCATE TABLE BlendComponent;
-  -- TRUNCATE TABLE BeanLot;
-  -- TRUNCATE TABLE CoffeeBean;
+CREATE TRIGGER trg_blu_ad AFTER DELETE ON BatchLotUsage
+FOR EACH ROW
+BEGIN
+  UPDATE BeanLot SET remainingKg = remainingKg + OLD.quantityUsedKg WHERE lotID = OLD.lotID;
+END//
 
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/Client.csv'
-  --   INTO TABLE Client FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
+CREATE TRIGGER trg_fb_ai AFTER INSERT ON FulfilledBy
+FOR EACH ROW
+BEGIN
+  UPDATE RoastingBatch SET remainingKg = remainingKg - NEW.quantityFromBatchKg WHERE batchID = NEW.batchID;
+END//
 
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/CoffeeBean.csv'
-  --   INTO TABLE CoffeeBean FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
+CREATE TRIGGER trg_fb_ad AFTER DELETE ON FulfilledBy
+FOR EACH ROW
+BEGIN
+  UPDATE RoastingBatch SET remainingKg = remainingKg + OLD.quantityFromBatchKg WHERE batchID = OLD.batchID;
+END//
 
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/BeanLot.csv'
-  --   INTO TABLE BeanLot FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/BlendComponent.csv'
-  --   INTO TABLE BlendComponent FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/ClientPrice.csv'
-  --   INTO TABLE ClientPrice FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/UserAccount.csv'
-  --   INTO TABLE UserAccount FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/SalesOrder.csv'
-  --   INTO TABLE SalesOrder FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/RoastingBatch.csv'
-  --   INTO TABLE RoastingBatch FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/OrderLine.csv'
-  --   INTO TABLE OrderLine FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/Shipment.csv'
-  --   INTO TABLE Shipment FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/QualityControlRecord.csv'
-  --   INTO TABLE QualityControlRecord FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- LOAD DATA LOCAL INFILE '/Users/dishajanardhan/Databases/coffee-roastery-sql-app/FulfilledBy.csv'
-  --   INTO TABLE FulfilledBy FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-  --   LINES TERMINATED BY '\n' IGNORE 1 LINES;
-
-  -- SET FOREIGN_KEY_CHECKS = 1;
-
---
-
-
+DELIMITER ;
